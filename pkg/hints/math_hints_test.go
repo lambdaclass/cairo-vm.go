@@ -1155,7 +1155,7 @@ func TestIsQuadResidueOk(t *testing.T) {
 		Ids:  idsManager,
 		Code: IS_QUAD_RESIDUE,
 	})
-	
+
 	err := hintProcessor.ExecuteHint(vm, &hintData, nil, nil)
 	if err != nil {
 		t.Errorf("IS_QUAD_RESIDUE hint failed with error: %s", err)
