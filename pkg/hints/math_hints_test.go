@@ -1138,3 +1138,35 @@ func TestSplitIntAssertRangeHintOutOfRangeError(t *testing.T) {
 		t.Errorf("SPLIT_INT_ASSERT_RANGE hint should have failed")
 	}
 }
+
+func TestIsQuadResidueOk(t *testing.T) {
+	vm := NewVirtualMachine()
+	vm.Segments.AddSegment()
+	idsManager := SetupIdsForTest(
+		map[string][]*MaybeRelocatable{
+			"x": {NewMaybeRelocatableFelt(FeltFromDecString("151461"))},
+			"y": {nil},
+		},
+		vm,
+	)
+
+	hintProcessor := CairoVmHintProcessor{}
+	hintData := any(HintData{
+		Ids:  idsManager,
+		Code: IS_QUAD_RESIDUE,
+	})
+
+	err := hintProcessor.ExecuteHint(vm, &hintData, nil, nil)
+	if err != nil {
+		t.Errorf("IS_QUAD_RESIDUE hint failed with error: %s", err)
+
+	}
+
+	root, err := idsManager.GetFelt("y", vm)
+	if err != nil {
+		t.Errorf("failed to get Y: %s", err)
+	}
+	if root != FeltFromDecString("724216096429330872433307564225094804656986062203645968681663112868516882638") {
+		t.Errorf("Expected is_quad_residue(151461) == 724216096429330872433307564225094804656986062203645968681663112868516882638 Got: %v", root)
+	}
+}
